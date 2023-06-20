@@ -1,13 +1,15 @@
 var express = require('express')
 var router = express.Router()
 require('dotenv').config()
-var resourcesPath = `${__dirname}/../resources/` // Path to the resources folder where files served will be stored.
+var path = require('path')
+var resourcesPath = path.resolve('resources') + '/' // Path to the resources folder where files served will be stored.
 
 var invalidKey = 'Invalid API Key'
 
 // Home Page
 router.get('/', function (req, res, next) {
-    res.send('test')
+    filename = 'public/index.html'
+    res.sendFile(resourcesPath + filename)
 })
 
 // Download without key
