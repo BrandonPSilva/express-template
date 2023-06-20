@@ -1,4 +1,5 @@
 var express = require('express')
+require('dotenv').config()
 port = 3000
 
 var indexRouter = require('./routes/index')
