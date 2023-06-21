@@ -2,7 +2,10 @@ var express = require('express')
 var router = express.Router()
 require('dotenv').config()
 var path = require('path')
-var resourcesPath = path.resolve('resources') + '/' // Path to the resources folder where files served will be stored.
+
+var resourcesPath = path.resolve('resources') + '/' // Path to the resources folder
+var functionsPath = path.resolve('functions') + '/' // Path to the functions folder
+var requests = require(functionsPath + 'requests')
 
 var invalidKey = 'Invalid API Key'
 
@@ -19,12 +22,29 @@ router.get('/download', function (req, res) {
 
 // Download
 router.get('/download/:id', function (req, res) {
-    if (req.params.id == process.env.API_KEY){
+    if (req.params.id == process.env.API_KEY) {
         var fileName = 'test.txt'
         res.download(resourcesPath + fileName)
     } else {
         res.send(invalidKey)
     }
+})
+
+// GET test
+router.get('/test', async function (req, res) {
+    try {
+        let result = await requests.getTest1()
+        console.log('/test executed OK ' + Date())
+        res.send(result)
+    } catch (e) {
+        console.log(e)
+        res.sendStatus(500)
+    }
+})
+
+// GET test
+router.get('/test1', function (req, res) {
+    res.send('{test1 loaded}')
 })
 
 module.exports = router
