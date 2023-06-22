@@ -44,7 +44,13 @@ router.get('/test', async function (req, res) {
 
 // GET test
 router.get('/test1', function (req, res) {
-    res.send('{test1 loaded}')
+    res.json({
+        "Users": [
+            { "firstName": "John", "lastName": "Doe" },
+            { "firstName": "Anna", "lastName": "Smith" },
+            { "firstName": "Peter", "lastName": "Jones" }
+        ]
+    })
 })
 
 module.exports = router
