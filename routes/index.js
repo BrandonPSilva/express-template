@@ -1,49 +1,65 @@
-var express = require('express')
-var router = express.Router()
-require('dotenv').config()
-var path = require('path')
+import { Router } from 'express'
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import * as requests from '../functions/requests.js'
 
-var resourcesPath = path.resolve('resources') + '/' // Path to the resources folder
-var functionsPath = path.resolve('functions') + '/' // Path to the functions folder
-var requests = require(functionsPath + 'requests')
+dotenv.config()
 
-var invalidKey = 'Invalid API Key'
+const router = Router()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const resourcesPath = path.resolve(__dirname, 'resources')
+
+const invalidKey = 'Invalid API Key'
 
 // Home Page
-router.get('/', function (req, res, next) {
-    filename = 'public/index.html'
-    res.sendFile(resourcesPath + filename)
+router.get('/', (req, res) => {
+    try {
+        const filename = 'public/index.html'
+        res.sendFile(resourcesPath + filename)
+    } catch (e) {
+        console.error(e)
+        res.sendError(500)
+    }
 })
 
 // Download without key
-router.get('/download', function (req, res) {
+router.get('/download', (req, res) => {
     res.send(invalidKey)
 })
 
-// Download
-router.get('/download/:id', function (req, res) {
-    if (req.params.id == process.env.API_KEY) {
-        var fileName = 'test.txt'
-        res.download(resourcesPath + fileName)
-    } else {
-        res.send(invalidKey)
+// Download with API key
+router.get('/download/:id', (req, res) => {
+    try {
+        if (req.params.id === process.env.API_KEY) {
+            const fileName = 'test.txt'
+            res.download(resourcesPath + fileName)
+        } else {
+            res.send(invalidKey)
+        }
+    } catch (e) {
+        console.error(e)
+        res.sendError(500)
     }
 })
 
 // GET test
-router.get('/test', async function (req, res) {
+router.get('/test', async (req, res) => {
     try {
-        let result = await requests.getTest1()
-        console.log('/test executed OK ' + Date())
+        console.log('/test executed OK ', Date())
+        const result = await requests.getTest1()
         res.send(result)
     } catch (e) {
-        console.log(e)
+        console.error(e)
         res.sendStatus(500)
     }
 })
 
-// GET test
-router.get('/test1', function (req, res) {
+// GET test1
+router.get('/test1', (req, res) => {
+    console.log('/test1 executed OK', Date())
     res.json({
         "Users": [
             { "firstName": "John", "lastName": "Doe" },
@@ -53,4 +69,4 @@ router.get('/test1', function (req, res) {
     })
 })
 
-module.exports = router
+export default router

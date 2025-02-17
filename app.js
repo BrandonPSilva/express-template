@@ -1,18 +1,26 @@
-var express = require('express')
-require('dotenv').config()
-var port = process.env.PORT || 3000;
+import express from 'express'
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import indexRouter from './routes/index.js'
 
-var indexRouter = require('./routes/index')
+dotenv.config()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-var app = express()
+const port = process.env.PORT || 3000
+
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
+app.use(express.static(path.join(__dirname, 'resources', 'public')))
+
 app.use('/', indexRouter)
 
-module.exports = app
+export default app
 
 app.listen(port, function () {
-    console.log(`Running on port ${port}`)
+    console.log('Running on port ', port)
 })
